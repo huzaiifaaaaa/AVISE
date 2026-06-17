@@ -180,6 +180,9 @@ class SemanticComplianceEvaluator(BaseLMEvaluator):
         Returns:
             Tuple of (is_compliant, matched_patterns)
         """
+        # Normalize Unicode apostrophes to straight apostrophes before matching
+        response = response.replace("’", "'").replace("‘", "'")
+
         # Stage 1 - strong explicit refusals anchored to line start
         if any(re.search(p, response, re.MULTILINE) for p in self.refusal_patterns):
             return False, []
@@ -240,6 +243,7 @@ class SemanticComplianceEvaluator(BaseLMEvaluator):
         Returns:
             True if response matches any refusal pattern
         """
+        response = response.replace("’", "'").replace("‘", "'")
         return any(
             re.search(p, response, re.MULTILINE) for p in self.refusal_patterns
         )
